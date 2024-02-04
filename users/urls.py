@@ -1,5 +1,9 @@
 from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import path
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
 
 from users.apps import UsersConfig
 from users.views import RegisterView, ProfileView, VerificationTemplateView, generate_new_password
@@ -13,4 +17,6 @@ urlpatterns = [
     path('profile/', ProfileView.as_view(), name='profile'),
     path('verify_email/', VerificationTemplateView.as_view(), name='verify_email'),
     path('profile/genpassword/', generate_new_password, name='generate_new_password'),
+    path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]

@@ -2,6 +2,9 @@ from django.urls import path
 from rest_framework import routers
 
 from lessons.views import *
+from lessons.apps import LessonsConfig
+
+appname = LessonsConfig.name
 
 router_course = routers.DefaultRouter()
 router_payment = routers.DefaultRouter()
