@@ -1,15 +1,17 @@
 from rest_framework import viewsets, generics
 from rest_framework.filters import SearchFilter, OrderingFilter
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 
-from lessons.models import Course, Lesson, Payment
+from lessons.models import Course, Lesson, Payment, Subscription
+from lessons.paginations import LessonCoursePagination
 from lessons.permissions import IsOwner, IsModerator
-from lessons.serializers import CourseSerializer, LessonSerializer, PaymentSerializer
+from lessons.serializers import CourseSerializer, LessonSerializer, PaymentSerializer, SubscriptionSerializer
 
 
 class CourseViewSet(viewsets.ModelViewSet):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
+    pagination_class = LessonCoursePagination
 
     def get_permissions(self):
         if self.action == 'create':
@@ -33,6 +35,7 @@ class LessonListAPIView(generics.ListAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
     permission_classes = [IsAuthenticated, IsOwner | IsModerator]
+    pagination_class = LessonCoursePagination
 
 
 class LessonRetrieveAPIView(generics.RetrieveAPIView):
@@ -64,3 +67,14 @@ class PaymentViewSet(viewsets.ModelViewSet):
         if self.action:
             permission_classes = [IsAuthenticated, IsModerator]
         return [permission() for permission in permission_classes]
+
+
+class SubscriptionViewSet(viewsets.ModelViewSet):
+    serializer_class = SubscriptionSerializer
+    queryset = Subscription.objects.all()
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        new_subscription = serializer.save()
+        new_subscription.user = self.request.user
+        new_subscription.save()
