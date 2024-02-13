@@ -1,7 +1,9 @@
 from rest_framework import viewsets, generics
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.response import Response
 
+from lessons import services
 from lessons.models import Course, Lesson, Payment, Subscription
 from lessons.paginations import LessonCoursePagination
 from lessons.permissions import IsOwner, IsModerator
@@ -62,6 +64,20 @@ class PaymentViewSet(viewsets.ModelViewSet):
     filter_backends = [SearchFilter, OrderingFilter]
     filterset_fields = ['course', 'lesson', 'method']
     ordering_fields = ['date']
+
+    def perform_create(self, serializer):
+        new_payment = serializer.save()
+        payment_create = services.create_stripe_payment(serializer.amount, 'usd')
+        new_payment.transaction_id = payment_create.id
+        new_payment.user = self.request.user
+        new_payment.save()
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        payment_id = Payment.transaction_id
+        payment_data = services.retrieve_stripe_payment(payment_id)
+        return Response(serializer.data), payment_data
 
     def get_permissions(self):
         if self.action:

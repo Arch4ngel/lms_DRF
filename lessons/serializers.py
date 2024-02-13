@@ -25,7 +25,7 @@ class CourseSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Course
-        fields = ['name', 'image', 'description']
+        fields = '__all__'
 
     def get_lesson_count(self, obj):
         return obj.lesson_set.all().count()
