@@ -11,6 +11,8 @@ class Course(models.Model):
     description = models.TextField(verbose_name='Описание')
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, verbose_name='Пользователь',
                              **NULLABLE)
+    date_publish = models.DateTimeField(verbose_name='Дата публикации', **NULLABLE)
+    date_update = models.DateTimeField(verbose_name='Дата обновления', **NULLABLE)
 
     def __str__(self):
         return f'{self.name}'

@@ -11,3 +11,4 @@ redis==5.0.1
 sqlparse==0.4.4
 
 stripe~=8.2.0
+celery~=5.3.6
