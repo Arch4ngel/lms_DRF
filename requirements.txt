@@ -9,3 +9,5 @@ pytils==0.4.1
 pytz==2023.3.post1
 redis==5.0.1
 sqlparse==0.4.4
+
+stripe~=8.2.0

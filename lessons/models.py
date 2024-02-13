@@ -45,6 +45,7 @@ class Payment(models.Model):
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, verbose_name='Пользователь',
                              **NULLABLE)
+    transaction_id = models.TextField(verbose_name='Идентификатор платежа', **NULLABLE)
     dateime = models.DateTimeField(auto_now_add=True, verbose_name='Время платежа')
     course = models.ForeignKey(Course, on_delete=models.SET_NULL, verbose_name='Курс', **NULLABLE)
     lesson = models.ForeignKey(Lesson, on_delete=models.SET_NULL, verbose_name='Урок', **NULLABLE)
