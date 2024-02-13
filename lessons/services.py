@@ -1,6 +1,6 @@
 import stripe
+from django_celery_beat.models import IntervalSchedule, PeriodicTask
 from stripe import InvalidRequestError
-
 from config import settings
 
 
@@ -22,4 +22,13 @@ def retrieve_stripe_payment(payment_id):
         raise InvalidRequestError("Платеж не найден")
 
 
-print(create_stripe_payment(100, 'usd').id)
+def create_periodic_activity_check():
+    schedule, created = IntervalSchedule.objects.get_or_create(
+         every=3,
+         period=IntervalSchedule.DAYS,
+     )
+
+    PeriodicTask.objects.create(
+         interval=schedule,
+         name='Activity check',
+         task='lessons.tasks.check_activity',)

@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'drf_yasg',
     'corsheaders',
     'stripe',
+    'django_celery_beat',
 
     'users',
     'lessons',
@@ -194,17 +195,28 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
 
-CORS_ALLOWED_ORIGINS = [
-    '<http://localhost:8000>',
-]
-
-CSRF_TRUSTED_ORIGINS = [
-    "https://read-and-write.example.com",
-    '<http://localhost:8000>',
-
-]
-
-CORS_ALLOW_ALL_ORIGINS = False
 
 STRIPE_API_URL = os.environ.get('STRIPE_API_URL')
 STRIPE_API_KEY = os.environ.get('STRIPE_API_KEY')
+
+
+CELERY_BROKER_URL = 'redis://localhost:6379'
+
+# URL-адрес брокера результатов, также Redis
+CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+
+# Часовой пояс для работы Celery
+CELERY_TIMEZONE = "Europe/Moscow"
+
+# Флаг отслеживания выполнения задач
+CELERY_TASK_TRACK_STARTED = True
+
+# Максимальное время на выполнение задачи
+CELERY_TASK_TIME_LIMIT = 30 * 60
+
+CELERY_BEAT_SCHEDULE = {
+    'task-name': {
+        'task': 'lessons.tasks.my_task',  # Путь к задаче
+        'schedule': timedelta(minutes=10),  # Расписание выполнения задачи (например, каждые 10 минут)
+    },
+}

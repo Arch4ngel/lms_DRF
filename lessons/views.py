@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from rest_framework import viewsets, generics
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -14,6 +16,13 @@ class CourseViewSet(viewsets.ModelViewSet):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
     pagination_class = LessonCoursePagination
+
+    def partial_update(self, request, *args, **kwargs):
+        course = self.get_object()
+        course.date_update = datetime.now()
+        course.save(update_fields=['date_update'])
+        serializer = self.get_serializer(course)
+        return Response(serializer.data)
 
     def get_permissions(self):
         if self.action == 'create':
